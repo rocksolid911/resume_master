@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -10,18 +11,23 @@ import { PdfExportButton } from '@/components/PdfExportButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResumeData, initialResumeData, resumeDataToText } from '@/types/resume';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TemplateSelector } from '@/components/TemplateSelector';
+import { availableTemplates } from '@/types/templates';
+import { Loader2 } from 'lucide-react';
+
 
 const LOCAL_STORAGE_KEY = 'resuMasterAiData';
+const LOCAL_STORAGE_TEMPLATE_KEY = 'resuMasterAiSelectedTemplate';
 
 export default function HomePage() {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
   const [currentResumeText, setCurrentResumeText] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>("input");
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(availableTemplates[0]?.id || 'classic');
   const [isLoaded, setIsLoaded] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Load from localStorage on initial mount
   useEffect(() => {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedData) {
@@ -31,8 +37,7 @@ export default function HomePage() {
         setCurrentResumeText(resumeDataToText(parsedData));
       } catch (error) {
         console.error("Failed to parse resume data from localStorage", error);
-        // Fallback to initial data if parsing fails
-        localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear corrupted data
+        localStorage.removeItem(LOCAL_STORAGE_KEY); 
         setResumeData(initialResumeData);
         setCurrentResumeText(resumeDataToText(initialResumeData));
       }
@@ -40,21 +45,36 @@ export default function HomePage() {
        setResumeData(initialResumeData);
        setCurrentResumeText(resumeDataToText(initialResumeData));
     }
+
+    const savedTemplateId = localStorage.getItem(LOCAL_STORAGE_TEMPLATE_KEY);
+    if (savedTemplateId && availableTemplates.some(t => t.id === savedTemplateId)) {
+      setSelectedTemplateId(savedTemplateId);
+    } else {
+      setSelectedTemplateId(availableTemplates[0]?.id || 'classic');
+    }
+
     setIsLoaded(true);
   }, []);
 
-  // Update currentResumeText and save to localStorage whenever resumeData changes
   const handleFormChange = (newData: ResumeData) => {
     setResumeData(newData);
     setCurrentResumeText(resumeDataToText(newData));
-    if (isLoaded) { // Only save after initial load to prevent overwriting with initialData
+    if (isLoaded) {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newData));
+    }
+  };
+
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplateId(templateId);
+    if (isLoaded) {
+      localStorage.setItem(LOCAL_STORAGE_TEMPLATE_KEY, templateId);
     }
   };
   
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="mr-2 h-8 w-8 animate-spin text-primary" />
         <div className="text-lg font-semibold">Loading ResuMaster AI...</div>
       </div>
     );
@@ -87,11 +107,19 @@ export default function HomePage() {
             </TabsContent>
 
             <TabsContent value="preview" className="space-y-6">
-              <TemplatePreview resumeData={resumeData} previewRef={previewRef} />
+              <TemplateSelector
+                selectedTemplateId={selectedTemplateId}
+                onSelectTemplate={handleTemplateSelect}
+              />
+              <TemplatePreview 
+                resumeData={resumeData} 
+                previewRef={previewRef}
+                selectedTemplateId={selectedTemplateId} 
+              />
               <div className="text-center">
                 <PdfExportButton 
                   targetRef={previewRef} 
-                  resumeDataExists={!!resumeData.name} // Enable button if name exists
+                  resumeDataExists={!!resumeData.name}
                 />
               </div>
             </TabsContent>
