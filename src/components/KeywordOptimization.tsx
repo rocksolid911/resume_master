@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -8,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { keywordOptimizeAndSummarize, KeywordOptimizeAndSummarizeInput } from '@/ai/flows/keyword-optimize-summarize';
 import { Loader2, SearchCheck, FileText, ClipboardCopy, Check } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 interface KeywordOptimizationProps {
   currentResumeText: string;

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -8,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { enhanceResumeWithJobDescription, EnhanceResumeInput } from '@/ai/flows/enhance-resume';
 import { Loader2, Sparkles, FileText, ClipboardCopy, Check } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 interface AIEnhancementProps {
   currentResumeText: string;
