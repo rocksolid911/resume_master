@@ -1,5 +1,3 @@
-# Firebase Studio
+# Resume Builder AI
 
-This is a NextJS starter in Firebase Studio.
-
-To get started, take a look at src/app/page.tsx.
+Resume builder using AI for enhancement of Resume
