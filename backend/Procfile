@@ -1,0 +1,2 @@
+web: gunicorn resume_builder.wsgi --log-file -
+release: python manage.py migrate && python manage.py seed_templates
