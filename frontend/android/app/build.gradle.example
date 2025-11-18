@@ -1,0 +1,77 @@
+// Example Android build.gradle configuration for flavors
+// Copy this content to your android/app/build.gradle file
+
+android {
+    compileSdkVersion 34
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.yourcompany.resumebuilder"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+    }
+
+    // ============================================================
+    // FLAVORS CONFIGURATION - Add this section
+    // ============================================================
+    flavorDimensions "environment"
+
+    productFlavors {
+        dev {
+            dimension "environment"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            resValue "string", "app_name", "Resume Builder DEV"
+        }
+
+        staging {
+            dimension "environment"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue "string", "app_name", "Resume Builder STAGING"
+        }
+
+        prod {
+            dimension "environment"
+            resValue "string", "app_name", "Resume Builder"
+        }
+    }
+    // ============================================================
+    // END OF FLAVORS CONFIGURATION
+    // ============================================================
+
+    buildTypes {
+        release {
+            // Signing configuration
+            signingConfig signingConfigs.debug
+
+            // Enable code shrinking, obfuscation, and optimization
+            minifyEnabled true
+            shrinkResources true
+
+            // ProGuard rules
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:multidex:1.0.3'
+}
