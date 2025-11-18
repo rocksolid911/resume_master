@@ -1,6 +1,8 @@
+import 'app_config.dart';
+
 class ApiConfig {
-  // Base URL - Change this to your backend URL
-  static const String baseUrl = 'http://localhost:8000';
+  // Base URL - Get from flavor configuration
+  static String get baseUrl => appConfig.apiBaseUrl;
 
   // API Endpoints
   static const String apiPrefix = '/api';
